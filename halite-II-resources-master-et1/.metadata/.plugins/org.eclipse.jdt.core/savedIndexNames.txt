@@ -1,0 +1,1 @@
+INDEX VERSION 1.126+/home/student/l2-pa-project-WebBot/halite-II-resources-master-et1/.metadata/.plugins/org.eclipse.jdt.core

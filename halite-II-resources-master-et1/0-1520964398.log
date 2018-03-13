@@ -1,0 +1,19 @@
+[
+ {
+  "Error": {
+   "Message": "ERRORED! Got Exception (if any): ERROR: Bot #0: Invalid thrust 14 for ship 2 (maximum is 7). (at character 11.)\nInput received from bot:\nt 2 14 106 \n          ^; Response received (if any): t 2 14 106 ",
+   "Turn": 1
+  },
+  "Frames": [
+   {
+    "Time": 154,
+    "Turn": 0
+   },
+   {
+    "Time": 16
+   }
+  ],
+  "PlayerID": 0,
+  "PlayerName": "Tamagocchi"
+ }
+]
