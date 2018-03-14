@@ -1,0 +1,19 @@
+[
+ {
+  "Error": {
+   "Message": "ERRORED! Got Exception (if any): ERROR: Bot #0: Received invalid character 'aicia'. (at character 1.)\nInput received from bot:\naici\n^; Response received (if any): aici",
+   "Turn": 1
+  },
+  "Frames": [
+   {
+    "Time": 180,
+    "Turn": 0
+   },
+   {
+    "Time": 11
+   }
+  ],
+  "PlayerID": 0,
+  "PlayerName": "Tamagocchi"
+ }
+]
