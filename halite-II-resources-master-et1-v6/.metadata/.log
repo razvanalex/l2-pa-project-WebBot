@@ -1,0 +1,62 @@
+!SESSION 2018-03-09 20:03:12.110 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_151
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2018-03-09 20:03:42.403
+!MESSAGE Could not create view: 'org.eclipse.ui.internal.introview'.
+
+!ENTRY org.eclipse.ui 4 0 2018-03-09 20:03:46.694
+!MESSAGE Problems occurred restoring workbench.
+!SUBENTRY 1 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.ui 4 0 2018-03-09 20:03:46.695
+!MESSAGE Unable to restore perspective: Workspace - Resource.
+!SUBENTRY 2 org.eclipse.ui 0 0 2018-03-09 20:03:46.695
+!MESSAGE Problems occurred restoring perspective.
+!SUBENTRY 3 org.eclipse.ui 0 0 2018-03-09 20:03:46.695
+!MESSAGE 
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.695
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.696
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.697
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.697
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.697
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2018-03-09 20:03:46.697
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.ui 4 0 2018-03-09 20:03:46.697
+!MESSAGE Could not find view: org.eclipse.ui.internal.introview
+!SUBENTRY 1 unknown 0 0 2018-03-09 20:03:46.697
+!MESSAGE OK
+!SESSION 2018-03-14 02:59:50.647 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_151
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2018-03-14 03:01:57.798
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2018-03-16 18:15:05.785 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.8.0_151
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2018-03-16 18:15:31.688
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.

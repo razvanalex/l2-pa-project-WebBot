@@ -1,0 +1,42 @@
+Ultima modificare: 4.02.2018
+
+Continutul repository-ului:
+
+ * environment/               - engine-ul jocului (putin modificat pentru a permite evaluare facila a proiectelor)
+ * replays/                   - folder cu rezultatele rularii botului (fisiere tip *.hlt, comprimate)
+ * replays-readable/          - folder cu rezultatele rularii botului (fisiere tip *.hlt, necomprimate)
+ * run.py                     - scriptul de evaluare
+ * halite-resources.zip       - arhiva cu continutul acestui repository
+
+===============
+Prerequisites
+===============
+
+Pentru rularea scriptului de evaluare aveți nevoie de Python (>= 2.7.2) si cmake (>=3.5).
+
+sudo apt-get install cmake
+
+Evaluarea proiectului se va face pe un sistem Linux, 64 biti.
+
+===============
+Testare
+===============
+
+Scriptul de evaluare va rula "make" înainte de execuția propriu-zisă.
+
+Exemplu rulare:
+
+* C++ Bot:
+    python ./run.py --cmd "./MyBot" --round 1
+
+* Java Bot:
+    python ./run.py --cmd "java MyBot" --round 1
+
+* Python Bot:
+    python ./run.py --cmd "python MyBot.py" --round 1
+
+Arguments:
+    -- cmd      Comanda de execuție pentru bot (trebuie sa fie validă pentru locația curentă)
+    -- round    (Optional) Indicele etapei (1, 2, 3), default 1
+    -- clean    (Optional) Șterge fișierele de log/replays
+
