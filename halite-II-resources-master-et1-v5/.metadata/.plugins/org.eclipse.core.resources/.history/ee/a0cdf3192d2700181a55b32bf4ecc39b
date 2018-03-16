@@ -1,0 +1,188 @@
+import hlt.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class MyBot {
+
+    public static void main(final String[] args) {
+        final Networking networking = new Networking();
+        final GameMap gameMap = networking.initialize("Tamagocchi");
+
+        // We now have 1 full minute to analyse the initial map.
+        final String initialMapIntelligence =
+                "width: " + gameMap.getWidth() +
+                "; height: " + gameMap.getHeight() +
+                "; players: " + gameMap.getAllPlayers().size() +
+                "; planets: " + gameMap.getAllPlanets().size();
+        Log.log(initialMapIntelligence);
+
+        final ArrayList<Move> moveList = new ArrayList<>();
+        //incepe jocul
+        for (;;) {
+            moveList.clear();
+            networking.updateMap(gameMap);
+            
+            //o tura
+            List<Ship>ships=new LinkedList<Ship>();
+            for(Ship ship:gameMap.getMyPlayer().getShips().values())
+            	ships.add(ship);
+            List<Planet>planets=new LinkedList<Planet>();
+            for(Planet planet:gameMap.getAllPlanets().values())
+            	planets.add(planet);
+            double[][]dist =new double[ships.size()][planets.size()];
+            for(int i=0;i<ships.size();i++)
+            	for(int j=0;j<planets.size();j++)
+            		dist[i][j]=ships.get(i).getDistanceTo(planets.get(j));
+           //sortare ships
+            ships=sortShips(ships,dist,ships.size(),planets.size());
+            for(int i=0;i<ships.size();i++)
+            	for(int j=0;j<planets.size();j++)
+            		dist[i][j]=ships.get(i).getDistanceTo(planets.get(j));
+            
+            
+            //pentru fiecare nava ship
+            int nrploc=0;
+            for(int i=0;i<ships.size();i++){
+            	Ship ship=ships.get(i);
+                if (ship.getDockingStatus() != Ship.DockingStatus.Undocked) {
+                    continue;
+                }
+                
+                
+               if(nrploc==planets.size())
+                    for(int i1=0;i1<ships.size();i1++)
+                        for(int i2=0;i2<planets.size();i2++)
+                            dist[i1][i2]=ships.get(i1).getDistanceTo(planets.get(i2));
+
+
+               double dmin=Double.MAX_VALUE;
+               int indmin=-1;
+
+                nrploc=0;
+                //pentru fiecare planeta netargetata
+                for(int j=0;j<planets.size();j++) {
+
+                    if(dist[i][j]==Double.MAX_VALUE) nrploc++;
+                	final Planet planet=planets.get(j);
+                    if (planet.isOwned()) { 
+                        nrploc++;    
+                        continue;
+                    }
+
+                    if (ship.canDock(planet)) {
+                        moveList.add(new DockMove(ship, planet)); 
+                        indmin=-1;
+                        break;
+                    }
+                    
+                    
+                    if(dist[i][j]<dmin){
+                    	dmin=dist[i][j];
+                    	indmin=j;
+                    }
+                }
+                nrploc++;    	
+                if(indmin==-1) continue;
+                for(int j=0;j<ships.size();j++){
+                	if(j!=i)
+                		dist[j][indmin]=Double.MAX_VALUE;
+                }
+                
+                final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planets.get(indmin), Constants.MAX_SPEED);
+                if (newThrustMove != null) {
+                        moveList.add(newThrustMove);
+                    }
+                }
+            Networking.sendMoves(moveList);
+        }
+    }
+    
+    
+    static double[] minShip(double d[][],int s,int p){
+    	double[] res=new double[s];
+    	
+    	for(int i=0;i<s;i++){
+    		double min=Double.MAX_VALUE;
+    		for(int j=0;j<p;j++)
+    			if(d[i][j]<min)
+    				min=d[i][j];
+    		res[i]=min;
+    	}
+    	return res;
+    }
+    
+    
+    static List<Ship> sortShips(List<Ship> ships,double[][]dist,int s,int p){
+    	List<Ship>result=new LinkedList<Ship>(ships);
+    	double arr[]=minShip(dist,s,p);
+    	sort(ships,arr,0,s-1,result);
+    	return result;
+    }
+    
+    static void merge(List<Ship> ships,double[] arr, int l, int m, int r,List<Ship>result)
+    {
+        int n1 = m - l + 1;
+        int n2 = r - m;
+        
+        double L[] = new double [n1];
+        double R[] = new double [n2];
+ 
+        for (int i=0; i<n1; ++i)
+            L[i] = arr[l + i];
+        for (int j=0; j<n2; ++j)
+            R[j] = arr[m + 1+ j];
+ 
+
+        int i = 0, j = 0;
+
+        int k = l;
+        while (i < n1 && j < n2)
+        {
+            if (L[i] < R[j])
+            {
+                result.set(k,ships.get(l+i));
+                i++;
+            }
+            else
+            {
+                result.set(k, ships.get(m+1+j));
+                j++;
+            }
+            k++;
+        }
+ 
+        while (i < n1)
+        {
+            result.set(k,ships.get(l+i));
+            k++;
+            i++;
+      
+        }
+ 
+        while (j < n2)
+        {
+            result.set(k,ships.get(m+1+j));
+            k++;
+            j++;
+        }
+    }
+ 
+    static void sort(List<Ship> ships,double arr[], int l, int r,List<Ship>result)
+    {
+        if (l < r)
+        {
+            int m = (l+r)/2;
+ 
+            sort(ships,arr, l, m,result);
+            sort(ships,arr , m+1, r,result);
+ 
+            merge(ships,arr, l, m, r,result);
+        }
+    }
+}
