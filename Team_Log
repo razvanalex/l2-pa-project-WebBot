@@ -1,6 +1,6 @@
 13.03.2018 Remus: Metoda navigateShipTowardsTarget din clasa Navigation este apelata de metoda navigateShipToDock care este apelata in clasa principala MyBot pentru a crea
 o mutare de tipul ThrustMove. Aceasta determina devierea prin rotirea cu un numar de radiani in sens trigonometric a navei fata de pozitia target primita ca parametru. Metoda
-efectueaza o corectie de 1rad de fiecare data cand se gasesc obiecte intre nava si target, obiectele fiind gasite folosind metoda objectsBetween din clasa GameMap, care la randul
+efectueaza o corectie de 1 grad de fiecare data cand se gasesc obiecte intre nava si target, obiectele fiind gasite folosind metoda objectsBetween din clasa GameMap, care la randul
 ei apeleaza metoda addEntitiesBetween pe toate navele si toate planetele de pe mapa (se verifica daca exista vreo nava sau vreo planeta intre nava si target). Atat pentru nave, cat
 si pentru planete, metoda addEntitiesBetween verifica daca segmentul nava-target intersecteaza un cerc de raza FORECAST_FUDGE_FACTOR cu centru intr-o entitate (planeta sau nava).
 Cum constanta FORECAST_FUDGE_FACTOR e putin mai mare decat raza unei nave, ea are sens doar pentru cazul in care navele ar fi statice, insa cum ships sunt entitati dinamice,
