@@ -20,7 +20,7 @@ INSTRUCTIUNI DE COMPILARE
   Nota: Makefile-ul functioneaza si pentru un apel de tipul:
     $ ./halite "make run"
   sau chiar (pentru checker):
-    $ python ./run.py --cmd "make run" --clean
+   $ python ./run.py --cmd "make run" --clean
 
 STRUCTURA PROIECTULUI
   - ./hlt/*.java           -> contine starter-kit-ul cu unele modificari in
@@ -36,13 +36,176 @@ STRUCTURA PROIECTULUI
                               compilare si rulare
 
 DETALII DE IMPLEMENTARE
+  Descriere generala
+    La fiecare tura, se creeaza o lista de nave cu statusul "Undocked" si o 
+    lista de planete care nu sunt ocupate de vreun bot. In cazul in care exista 
+    planete, inseamna ca trebuie transmise mutari pentru a ocupa si celelalte 
+    planete neocupate. Prin urmare, pentru a cuceri aceste planete neocupate, 
+    intr-un mod eficien, se sorteaza navele in functie de distanta pana la cea 
+    mai apropiata planeta prin apelul SortShipsClass.sortShips(ships, planets). 
+    Se parcurge lista rezultata si se atribuie fiecarei nave, cea mai apropiata 
+    planeta. In cazul in care nava se poate andoca, o va face. Alftel se 
+    "calculeaza" ruta catre planeta asociata, in cazul in care nava poate sa 
+    ajunga la destinatie, altfel sta pe loc.
 
+    Sortarea navelor dupa distanta fata de planete (in fisierul SortShipsClass)
+      Pentru sortarea navelor se foloseste o clasa MyEntry care asociaza 
+      fiecarei nave o planeta ca si valoare. Comparatorul construit peste
+      aceasta clasa compara distantele dintre nava curenta si planeta asociata.
+      Aceasta este folosita in sortarea navelor. 
+      Metoda sortShips() creeaza un TreeSet care contine entitati de tipul 
+      MyEntry sortate dupa distantele fata de cea mai apropiata planeta. 
+
+      Algoritm:
+        static TreeSet<MyEntry> sortShips(List<Ship>ships,List<Planet>planets)
+
+        Date de intrare:
+        - primeste ca parametri o lista de nave si de planete si intoarce o 
+        lista de elemente de tipul MyEntry unde MyEntry este o clasa ce contine 
+        campurile key de tipul Ship si value de tipul Planet; deci un obiect de 
+        tipul MyEntry asociaza unei nave ship o planeta planet.
+        - pentru a nu modifica parametrii primiti (a nu avea efecte laterale), 
+        se va lucra cu o copie a parametrului ships: copyShips si cu o copie a 
+        parametrului planets: copyPlanets
+        - lista new_ships este lista intoarsa ca rezultat
+
+        Functionalitate:
+        - voi folosi multimea ordonata de tipul TreeSet: dist_s_p, pentru a 
+        retine navele la distantele cele mai mici de fiecare planeta, deci
+        multimea dist_s_p va avea un numar de maxim p elemente, unde am notat cu
+        p-numarul de planete (planets.size()) si cu s-numarul de nave 
+        (ships.size()). Pentru a ordona elementele acestei multimi se foloseste 
+        un comparator ComparatorSP, care ordoneazanperechile (nava,planeta) 
+        (de tipul MyEntry) din dist_s_p crescator, dupa distanta nava-planta
+
+        - se itereaza prin fiecare nava si fiecare planeta, luandu-se fiecare 
+        pereche (ship-planet) (complexitate O(s*p)). Se verifica daca mai exista
+        planeta planet in dist_s_p (prin parcurgerea multimii dist_s_p, de
+        dimensiune maxima p => complexitate de O(p)). In cazul in care aceasta 
+        mai exista, se verifica daca perechea existenta are distanta dintre 
+        componente mai mare decat perechea care se doreste sa se introduca, caz 
+        in care se elimina din multime si se introduce noua pereche (pentru a 
+        salva in multime navele cele mai apropiate de planete)(=> o complexitate 
+        de O(log(p)) pentru a adauga elemente intr-un TreeSet) sau nu, caz in 
+        care perechea nu se introduce si se trece la perechea urmatoare 
+        => Se obtine pentru acest pas o complexitate in timp de 
+                        O(s * p * (p + log(p))) = O(s * p^2)
+        La sfarsitul acestui pas vor ajunge in dist_s_p navele din copyShips 
+        cele mai apropiate de planetele din copyPlanets
+
+        - se itereaza prin multimea dist_s_p gasita si pentru fiecare pereche a 
+        sa, se cauta nava din pereche in lista de nave copyShips (obligatoriu 
+        va fi in copyShips pentru ca la constructia lui dist_s_p la pasul 
+        anterior, a fost luata din copyShips) (=>complexitate de O(p*s)). Odata 
+        gasita nava, aceasta se elimina (iter.remove()) pentru a nu mai putea fi
+        selectata inca o data (lista rezultata intoarce mutarile fiecarei nave, 
+        deci o nava trebuie sa aiba asociata o singura planeta) (nava se 
+        selecteaza iterand prin dist_s_p, care e sortata crescator dupa distanta
+        dintre elementele perechii, deci nava se va afla la distanta minima 
+        fata de o planeta), se elimina planeta asociata acesteia si se adauga 
+        noua mutare in lista rezultata new_ships (=> complexitate de O(1) + O(1)
+        (elimin din LinkedList) + O(1) (adaug in LinkedList) = O(1))
+        => Se obtine pentru acest pas o complexitate in timp de O(p * s)
+        => In total acesti pasi au o complexitate in timp de 
+                          O(s * p^2) + O(s * p) = O(s * p^2)
+        La finalul acestui pas, in cazul in care o aceeasi nava s-a aflat la o 
+        distanta cea mai mica de mai multe planete, fata de celelalte nave, 
+        lista copyPlanets nu se goleste si deci mai trebuie gasite nave pentru 
+        planetele ramase, deci se curata multimea dist_s_p, se verifica daca au 
+        mai ramas nave (daca numarul navelor ramase in copyShips e mai mic decat 
+        numarul planetelor) si se reiau cei 2 pasi pana se goleste lista 
+        copyPlanets (=> complexitate O(1) in Best Case cand prin aplicarea 
+        algoritmului se elimina dintr-odata p nave si cele p planete, si O(p) in
+        Worst Case cand algoritmul nu elimina decat o planeta si o nava la o 
+        aplicare). Algoritmul acesta se repeta la randul sau cat timp lista
+        copyShips nu devine goala (=> O(s / p) complexitate deoarece se elimina 
+        p nave corespunzatoare celor p planete la fiecare aplicare a sa).
+
+        Astfel, daca notam
+          p - nr de planete
+          s - nr de nave
+        Avem complexitatile de timp:
+        > Best Case:
+          - fiecare nava este mai apropiata de o singura planeta decat celelalte, 
+          iar prin eliminarea a p nave cele mai apropiate de cele p planete, se 
+          respecta in continuare conditia
+            s / p * 1 * [O(s * p * (p + log(p))) + O(p * s)] = O(s^2 * p)
+        > Worst Case:
+          - fiecare nava este mai apropiata de toate planetele decat celelalte,
+          iar prin elimiarea acesteia, se respecta in continuare conditia
+            s / p * p * [O(s * p * (p + log(p))) + O(p * s)] = O(s^2 * p^2)
+        Avem complexitatile de spatiu:
+        > Best Case
+            s / p * 1 * [O(s * p) + O(p)] = O(s ^ 2)
+        > Worst Case
+            s / p * p * [O(s * p) + O(p)] = O(s^2 * p)
+
+    Evitarea coliziunilor
+      Mecanismul de baza pentru evitarea coliziunilor este cel implementat in
+      starter-kit, la care am adus mici modificari pentru a imbunatati 
+      rezultatele. Mecanismul utilizat in starter-kit este urmatorul:
+        In clasa Navigation exista doua metode care reprezinta doua tipuri de 
+        navigare: 
+          - Navigare catre tinta
+          - Navigare catre andocare (care reprezinta un caz particular de 
+            navigare catre tinta)
+        Navigarea catre tinta (realizata de metoda navigateShipTowardsTarget())
+        calculeaza astfel urmatoarea mutare a navei curente:
+          - se calculeaza distanta si unghiul catre tina (in linie dreapta)
+          - se verifica daca exista obiecte in aceasta cale directa. 
+            - Daca "DA", se calculeaza o noua tinta, rotita cu un unghi 
+            angularStepRad invers acelor de ceasornic si se repeta cele de mai 
+            sus.
+            - Daca "NU" se verufuca daca nava poate folosi viteza maxima pt a 
+            ajunge la tinta, sau nu. 
+          - In final, se converteste unghiul in grade (DEG) si se returneaza 
+          noua comanda pentru nava curenta.
+
+        Verificarea pentru existenta obiectelor in calea navei se face in clasa 
+        GameMap prin metoda objectsBetween(). Aceasta verifica daca exista nave
+        sau planete in cale. Aceasta verificare se face astfel: 
+          - Pentru orice ENTITATE care nu este cea curenta
+            - Daca segmentul determinat de pozitia curenta si pozitia 
+            destinatiei intersecteaza cercul in care se afla ENTITATEA, atunci 
+            avem coliziune.  
+        Verificarea intersectiei se face in clasa Collision, prin metoda statica
+        segmentCircleIntersect() care o verificare matematica de intersecte de 
+        drepta si cerc.
+
+      In final, modificarea adusa este in clasa GameMap, unde in metoda 
+      addEntitiesBetween() am introdus si verificarea daca entitatea curenta de 
+      tip Ship se poate lovi de o alta entitate la pasul urmator (adica la o
+      distanta de Constants.MAX_SPEED, care reprezinta lungimea drumului parcurs
+      intr-un tur, in cazul in care nava nu trebuie sa se andocheze).
 
 SURSE DE INSPIRATIE
-
+https://gist.github.com/psayre23/c30a821239f4818b0709
 
 RESPONSABILITATEA FIECARUI MEMBRU AL ECHIPEI
+- Bompa Remus-Stefan:
+  Cercetare si implementarea solutiei finale.
 
+- Niculescu Mihai-Alexandru:
+  Testare si gasirea de bug-uri.
+
+- Smadu Razvan-Alexandru:
+  Cercetare in cautarea unui algoritm de coliziune, printr-o abordare 
+  matematica, prin care se verifica daca pozitia urmatoare a unei nave se 
+  intersecteaza cu o alta entitate a aceluiasi jucator. Pana am ales sa mergem
+  pe solutia colegului meu, Bompa Remus, pentru eficienta algoritmului.
+  De asemenea, am venit cu idei in implementarea algoritmilor de distribuire
+  a planetelor pentru fiecare nava (folosirea unui TreeSort pt mentinerea 
+  sortata a vectorului de nave, idee la care s-a renuntat din cauza ca 
+  LinkedList oferea o solutie mai buna). Am dat forma finala proiectului (am 
+  extras numai fisierele necesare pentru upload si am imbunatatit Makefile-ul 
+  pentru a rula checker-ul) si am redactat README-ul curent, desigur cu ajutorul
+  celorlalti.
+
+- Voiculescu Ion:
+  In cadrul aceeste etape am contribuit doar cu cateva ideei de implementare si
+  strategii care aveau in vedere si viitoarele modificare care vor venii in 
+  urmatoarele etape. Dar in mare parte, impreuna cu colegii mei, am discutat
+  si am gasit idei care s-au dovedit mai eficiente din testele facute.
 
 AUTORI:
   > Grupa 235CB:
