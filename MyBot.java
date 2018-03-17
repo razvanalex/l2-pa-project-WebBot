@@ -6,69 +6,64 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
+
 public class MyBot {
-	public static int turn = 1;
+	public static int turn=1;
+    public static void main(final String[] args) {
+        final Networking networking = new Networking();
+        final GameMap gameMap = networking.initialize("Tamagocchi");
 
-	public static void main(final String[] args) {
-		final Networking networking = new Networking();
-		final GameMap gameMap = networking.initialize("WebBot");
+        // We now have 1 full minute to analyse the initial map.
+        final String initialMapIntelligence =
+                "width: " + gameMap.getWidth() +
+                "; height: " + gameMap.getHeight() +
+                "; players: " + gameMap.getAllPlayers().size() +
+                "; planets: " + gameMap.getAllPlanets().size();
+        Log.log(initialMapIntelligence);
 
-		// We now have 1 full minute to analyse the initial map.
-		final String initialMapIntelligence = "width: " + gameMap.getWidth()
-				+ "; height: " + gameMap.getHeight() + "; players: "
-				+ gameMap.getAllPlayers().size() + "; planets: "
-				+ gameMap.getAllPlanets().size();
-
-		Log.log(initialMapIntelligence);
-
-		final ArrayList<Move> moveList = new ArrayList<>();
-
-		// incepe jocul
-		for (;; turn++) {
-			moveList.clear();
-			networking.updateMap(gameMap);
-
-			// o tura
-			List<Ship> ships = new LinkedList<Ship>();
-			for (Ship ship : gameMap.getMyPlayer().getShips().values())
-				if (ship.getDockingStatus() == Ship.DockingStatus.Undocked)
-					ships.add(ship);
-			List<Planet> planets = new LinkedList<Planet>();
-			for (Planet planet : gameMap.getAllPlanets().values()) {
-				if (!planet.isOwned()) {
-					planets.add(planet);
-				}
-			}
-
-			// sortare ships
-			TreeSet<SortShipsClass.MyEntry> shipMoves = null;
-			if (planets.isEmpty() == false) {
-				shipMoves = SortShipsClass.sortShips(ships, planets);
-				
-				// pentru fiecare nava ship
-				for (Iterator<SortShipsClass.MyEntry> iter = shipMoves.iterator(); iter.hasNext(); ) {			
-					SortShipsClass.MyEntry myEntry = iter.next();
-					Ship ship = myEntry.getKey();
-					Planet planet = myEntry.getValue();
-
-					if (ship.canDock(planet)) {
-						moveList.add(new DockMove(ship, planet));
-						continue;
-					}
-					
-					boolean avoidObstacles = true;
-					final ThrustMove newThrustMove = Navigation
-							.navigateShipToDock(gameMap, ship, planet,
-									Constants.MAX_SPEED, avoidObstacles);
-					
-					if (newThrustMove != null) {
-						moveList.add(newThrustMove);
-					}
-				}
-			}
-			
-			Networking.sendMoves(moveList);
-		}
-	}
-
+        final ArrayList<Move> moveList = new ArrayList<>();
+        //incepe jocul
+        for (;;turn++) {
+            moveList.clear();
+            networking.updateMap(gameMap);
+            
+            //o tura
+            List<Ship>ships=new LinkedList<Ship>();
+            for(Ship ship:gameMap.getMyPlayer().getShips().values())
+            	if (ship.getDockingStatus() == Ship.DockingStatus.Undocked)
+            		ships.add(ship);
+            List<Planet>planets=new LinkedList<Planet>();
+            for(Planet planet:gameMap.getAllPlanets().values()){
+            	if(!planet.isOwned()){
+            		planets.add(planet);
+            	}
+            }
+           //sortare ships
+            List<SortShipsClass.MyEntry>shipMoves=null;
+            if(planets.isEmpty()==false){
+            	shipMoves=SortShipsClass.sortShips(ships,planets);        
+            //pentru fiecare nava ship
+            for(Iterator<SortShipsClass.MyEntry> iter=shipMoves.iterator();iter.hasNext();){
+            	SortShipsClass.MyEntry myEntry=iter.next();
+            	Ship ship=myEntry.getKey();
+            	Planet planet=myEntry.getValue();	
+              
+                if (ship.canDock(planet)) {
+                    moveList.add(new DockMove(ship, planet));        
+                    continue;
+                }            
+                boolean avoidObstacles = true;           
+                final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED,
+                		avoidObstacles);
+                if (newThrustMove != null) {
+                        moveList.add(newThrustMove);                        
+                    }
+                }
+            }
+            Networking.sendMoves(moveList);
+        }
+    }
+    
+    
+    
 }
