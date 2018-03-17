@@ -47,14 +47,14 @@ public class SortShipsClass {
 	}
 	
 	
-	static TreeSet<MyEntry> sortShips(List<Ship>ships,List<Planet>planets){
+	static List<MyEntry> sortShips(List<Ship>ships,List<Planet>planets){
 		List<Ship>copyShips=new LinkedList<Ship>();
 		for(int i=0;i<ships.size();i++)
 			copyShips.add(ships.get(i));
 		
     	TreeSet<MyEntry>dist_s_p=new TreeSet<MyEntry>(new ComparatorSP());
     	
-    	TreeSet<MyEntry> new_ships=new TreeSet<MyEntry>(new ComparatorSP());
+    	List<MyEntry> new_ships=new LinkedList<MyEntry>();
     	
     	while(copyShips.isEmpty()==false){
     	List<Planet>copyPlanets=new LinkedList<Planet>();
