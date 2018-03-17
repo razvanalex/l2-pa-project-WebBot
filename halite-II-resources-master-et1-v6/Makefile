@@ -6,9 +6,9 @@
 	java -Xmx1G MyBot $(ARGS) 
  
  MyBot:
-	javac *.java
+	javac *.java */*.java
  
  clean:
-	rm -rf *.class
+	rm -rf *.class */*.class
 
 
