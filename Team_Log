@@ -1,12 +1,30 @@
-13.03.2018 Remus: Metoda navigateShipTowardsTarget din clasa Navigation este apelata de metoda navigateShipToDock care este apelata in clasa principala MyBot pentru a crea
-o mutare de tipul ThrustMove. Aceasta determina devierea prin rotirea cu un numar de radiani in sens trigonometric a navei fata de pozitia target primita ca parametru. Metoda
-efectueaza o corectie de 1 grad de fiecare data cand se gasesc obiecte intre nava si target, obiectele fiind gasite folosind metoda objectsBetween din clasa GameMap, care la randul
-ei apeleaza metoda addEntitiesBetween pe toate navele si toate planetele de pe mapa (se verifica daca exista vreo nava sau vreo planeta intre nava si target). Atat pentru nave, cat
-si pentru planete, metoda addEntitiesBetween verifica daca segmentul nava-target intersecteaza un cerc de raza FORECAST_FUDGE_FACTOR cu centru intr-o entitate (planeta sau nava).
-Cum constanta FORECAST_FUDGE_FACTOR e putin mai mare decat raza unei nave, ea are sens doar pentru cazul in care navele ar fi statice, insa cum ships sunt entitati dinamice,
-cercul centrat intr-o nava care nu trebuie sa intersecteze directia unei alte nave trebuie sa fie comparabil cu viteza maxima a unei nave: MAX_SPEED. Din considerente de viteza, am
-ales raza acestui cerc de 1/3*MAX_SPEED (daca raza era prea mare, o nava care ar incerca sa evite o coliziune cu o alta nava, ar face un unghi mai mare fata de traiectoria initiala
-a acesteia, s-ar indeparta de target si deci numarul de ture ar creste ).
+13.03.2018 Remus: -Metoda navigateShipTowardsTarget din clasa Navigation este 
+apelata de metoda navigateShipToDock care este apelata in clasa principala MyBot 
+pentru a crea o mutare de tipul ThrustMove. Aceasta determina devierea prin 
+rotirea cu un numar de radiani in sens trigonometric a navei fata de pozitia 
+target primita ca parametru. Metoda efectueaza o corectie de 1 grad de fiecare 
+data cand se gasesc obiecte intre nava si target, obiectele fiind gasite folosind 
+metoda objectsBetween din clasa GameMap, care la randul ei apeleaza metoda
+addEntitiesBetween pe toate navele si toate planetele de pe mapa (se verifica 
+daca exista vreo nava sau vreo planeta intre nava si target). Atat pentru nave, 
+cat si pentru planete, metoda addEntitiesBetween verifica daca segmentul nava-
+target intersecteaza un cerc de raza FORECAST_FUDGE_FACTOR cu centru intr-o 
+entitate (planeta sau nava). Cum constanta FORECAST_FUDGE_FACTOR e putin mai mare 
+decat raza unei nave, ea are sens doar pentru cazul in care navele ar fi statice, 
+insa cum ships sunt entitati dinamice,cercul centrat intr-o nava care nu trebuie 
+sa intersecteze directia unei alte nave trebuie sa fie comparabil cu viteza maxima
+a unei nave: MAX_SPEED. Din considerente de viteza, am ales raza acestui cerc de 
+MAX_SPEED (daca raza era prea mare, o nava care ar incerca sa evite o coliziune 
+cu o alta nava, ar face un unghi mai mare fata de traiectoria initiala a acesteia,
+s-ar indeparta de target si deci numarul de ture ar creste iar daca raza ar fi prea
+mica, ar creste riscul intampinarii unor coliziuni).
+-am setat viteza de deplasare maxima a unei nave folosita pentru crearea mutarii
+newThrustMove prin apelul metodei Navigation.navigateShipToDock la Constants.MAX_SPEED
+-pentru a creste mobilitatea navelor si implicit viteza navelor am setat unghiul de
+variatie la aplicarea unei corectii angularStepRad din metoda navigateShipToDock
+a clasei Navigation de la un grad la 4.5 grade
+-am realizat 6 versiuni de rezolvare pentru aceasta etapa (halite-II-resources-
+master-et1-v*) ,dintre care ultima este cea finala
 -------------------------------------------------
 
 17.03.2018 by Smadu Razvan
