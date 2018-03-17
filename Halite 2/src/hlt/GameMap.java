@@ -78,14 +78,48 @@ public class GameMap {
     private static void addEntitiesBetween(final List<Entity> entitiesFound,
                                            final Position start, final Position target,
                                            final Collection<? extends Entity> entitiesToCheck) {
+        
+        double angle = Math.atan((target.getYPos() -  start.getYPos()) / 
+            (target.getXPos() -  start.getXPos()));
+
+        double lowerDistanceX = Constants.FORECAST_FUDGE_FACTOR *
+            Math.cos(angle - Math.PI / 2);
+        double lowerDistanceY = Constants.FORECAST_FUDGE_FACTOR *
+            Math.sin(angle - Math.PI / 2);
+        double upperDistanceX = Constants.FORECAST_FUDGE_FACTOR *
+            Math.cos(angle + Math.PI / 2);
+        double upperDistanceY = Constants.FORECAST_FUDGE_FACTOR *
+            Math.sin(angle + Math.PI / 2);
+
+        Position lowerStart = new Position(
+            start.getXPos() + lowerDistanceX, 
+            start.getYPos() + lowerDistanceY);
+        
+        Position upperStart = new Position(
+            start.getXPos() + upperDistanceX, 
+            start.getYPos() + upperDistanceY);
+        
+        Position lowerTarget = new Position(
+            target.getXPos() + lowerDistanceX, 
+            target.getYPos() + lowerDistanceY);
+        
+        Position upperTarget = new Position(
+            target.getXPos() + upperDistanceX, 
+            target.getYPos() + upperDistanceY);
 
         for (final Entity entity : entitiesToCheck) {
             if (entity.equals(start) || entity.equals(target)) {
                 continue;
             }
-            if (Collision.segmentCircleIntersect(start, target, entity, Constants.FORECAST_FUDGE_FACTOR)) {
+
+            boolean low = Collision.segmentCircleIntersect(lowerStart, lowerTarget, entity, Constants.FORECAST_FUDGE_FACTOR);
+            boolean high =  Collision.segmentCircleIntersect(upperStart, upperTarget, entity, Constants.FORECAST_FUDGE_FACTOR);
+            boolean middle = Collision.segmentCircleIntersect(start, target, entity, Constants.FORECAST_FUDGE_FACTOR);
+           
+            if (middle || low || high) {
                 entitiesFound.add(entity);
             }
+            
         }
     }
 
