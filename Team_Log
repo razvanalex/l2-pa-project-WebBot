@@ -7,3 +7,33 @@ Cum constanta FORECAST_FUDGE_FACTOR e putin mai mare decat raza unei nave, ea ar
 cercul centrat intr-o nava care nu trebuie sa intersecteze directia unei alte nave trebuie sa fie comparabil cu viteza maxima a unei nave: MAX_SPEED. Din considerente de viteza, am
 ales raza acestui cerc de 1/3*MAX_SPEED (daca raza era prea mare, o nava care ar incerca sa evite o coliziune cu o alta nava, ar face un unghi mai mare fata de traiectoria initiala
 a acesteia, s-ar indeparta de target si deci numarul de ture ar creste ).
+-------------------------------------------------
+
+17.03.2018 by Smadu Razvan
+Contribuia in timpul primei etape:
+    - Am realizat un sistem de coliziune (l-am numit Simple Collision Avoidance 
+    System) care detecteaza o coliziune viitoare si recalculeaza pozitia, pana 
+    cand nu se mai detecteaza vreo coliziune. Detectia coliziunii initiala (cea
+    din starter kit) am imbunatatit-o folosind 3 drepte, in loc de una, pentru
+    a verifica daca nava se va lovi, daca va merege pe acea cale inainte, vreo
+    nava/planeta. De asemenea fac verificarea daca in pozitia finala se va ciocni
+    de vreo entitate. Traseul pe care il ia este verificat, intrucat daca doua 
+    drumuri se intersecteaza, se va considera ca exista posibilitatea unei
+    coliziuni si se va recalcula traseul. Poate pe viitor, daca va fi cazul sa
+    se foloseasca aceasta implementare, voi introduce si un mecanism de timing 
+    (de sincronizare) in care daca doua drumuri se intersecteaza, se se faca 
+    si detectia in functie de timp, a coliziunii. Aceasta metoda scoate o un
+    rezultat bun (am testat pe ~1500 de jocuri (cu for in bash) si de fiecare
+    data nu s-a obtinut coliziune), insa mai exista timpi morti pentru unele 
+    nave (adica stationeaza, deoarece se depaseste maxCorrection) si isi va 
+    relua deplasarea in turele urmatoare. Timpul de cuceriri este cu ~20% mai 
+    mare decat cea din implementarea actuala, si trece checker-ul cu maxim.
+    - Am venit cu ideea folosirii unui TreeMap pentru sortare, idee la care s-a
+    renuntat.
+    - Am realizat niste teste pentru ultima implementare pentru a verifica 
+    daca exista consistenta in raspunsurile date (la un moment dat pe unele 
+    seed-uri valori diferite, insa s-a dovedit ca era datorita versiunilor 
+    diferite de java)
+    - Realizarea de scripturi pentru facilizarea development-ului.
+    - Deschiderea branch-ului pentru versiunea de upload.
+-------------------------------------------------
