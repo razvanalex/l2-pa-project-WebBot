@@ -20,7 +20,7 @@ INSTRUCTIUNI DE COMPILARE
   Nota: Makefile-ul functioneaza si pentru un apel de tipul:
     $ ./halite "make run"
   sau chiar (pentru checker):
-   $ python ./run.py --cmd "make run" --clean
+    $ python ./run.py --cmd "make run" --clean
 
 STRUCTURA PROIECTULUI
   - ./hlt/*.java           -> contine starter-kit-ul cu unele modificari in
@@ -41,7 +41,7 @@ DETALII DE IMPLEMENTARE
     lista de planete care nu sunt ocupate de vreun bot. In cazul in care exista 
     planete, inseamna ca trebuie transmise mutari pentru a ocupa si celelalte 
     planete neocupate. Prin urmare, pentru a cuceri aceste planete neocupate, 
-    intr-un mod eficien, se sorteaza navele in functie de distanta pana la cea 
+    intr-un mod eficient, se sorteaza navele in functie de distanta pana la cea 
     mai apropiata planeta prin apelul SortShipsClass.sortShips(ships, planets). 
     Se parcurge lista rezultata si se atribuie fiecarei nave, cea mai apropiata 
     planeta. In cazul in care nava se poate andoca, o va face. Alftel se 
@@ -53,15 +53,15 @@ DETALII DE IMPLEMENTARE
       fiecarei nave o planeta ca si valoare. Comparatorul construit peste
       aceasta clasa compara distantele dintre nava curenta si planeta asociata.
       Aceasta este folosita in sortarea navelor. 
-      Metoda sortShips() creeaza un TreeSet care contine entitati de tipul 
+      Metoda sortShips() creeaza un List care contine entitati de tipul 
       MyEntry sortate dupa distantele fata de cea mai apropiata planeta. 
 
       Algoritm:
         static TreeSet<MyEntry> sortShips(List<Ship>ships,List<Planet>planets)
 
-        Date de intrare:
+        Date de intrare/iesire:
         - primeste ca parametri o lista de nave si de planete si intoarce o 
-        lista de elemente de tipul MyEntry unde MyEntry este o clasa ce contine 
+        lista de elemente de tipul MyEntry, unde MyEntry este o clasa ce contine 
         campurile key de tipul Ship si value de tipul Planet; deci un obiect de 
         tipul MyEntry asociaza unei nave ship o planeta planet.
         - pentru a nu modifica parametrii primiti (a nu avea efecte laterale), 
@@ -73,9 +73,9 @@ DETALII DE IMPLEMENTARE
         - voi folosi multimea ordonata de tipul TreeSet: dist_s_p, pentru a 
         retine navele la distantele cele mai mici de fiecare planeta, deci
         multimea dist_s_p va avea un numar de maxim p elemente, unde am notat cu
-        p-numarul de planete (planets.size()) si cu s-numarul de nave 
+        p-numarul de planete (planets.size()) si cu s - numarul de nave 
         (ships.size()). Pentru a ordona elementele acestei multimi se foloseste 
-        un comparator ComparatorSP, care ordoneazanperechile (nava,planeta) 
+        un comparator ComparatorSP, care ordoneaza perechile (nava, planeta) 
         (de tipul MyEntry) din dist_s_p crescator, dupa distanta nava-planta
 
         - se itereaza prin fiecare nava si fiecare planeta, luandu-se fiecare 
@@ -156,7 +156,7 @@ DETALII DE IMPLEMENTARE
             - Daca "DA", se calculeaza o noua tinta, rotita cu un unghi 
             angularStepRad invers acelor de ceasornic si se repeta cele de mai 
             sus.
-            - Daca "NU" se verufuca daca nava poate folosi viteza maxima pt a 
+            - Daca "NU" se verifica daca nava poate folosi viteza maxima pt a 
             ajunge la tinta, sau nu. 
           - In final, se converteste unghiul in grade (DEG) si se returneaza 
           noua comanda pentru nava curenta.
@@ -191,8 +191,8 @@ RESPONSABILITATEA FIECARUI MEMBRU AL ECHIPEI
 - Smadu Razvan-Alexandru:
   Cercetare in cautarea unui algoritm de coliziune, printr-o abordare 
   matematica, prin care se verifica daca pozitia urmatoare a unei nave se 
-  intersecteaza cu o alta entitate a aceluiasi jucator. Pana am ales sa mergem
-  pe solutia colegului meu, Bompa Remus, pentru eficienta algoritmului.
+  intersecteaza cu o alta entitate a aceluiasi jucator. Pana la urma, am ales sa
+  mergem pe solutia colegului meu, Bompa Remus, pentru eficienta algoritmului.
   De asemenea, am venit cu idei in implementarea algoritmilor de distribuire
   a planetelor pentru fiecare nava (folosirea unui TreeSort pt mentinerea 
   sortata a vectorului de nave, idee la care s-a renuntat din cauza ca 
@@ -202,8 +202,8 @@ RESPONSABILITATEA FIECARUI MEMBRU AL ECHIPEI
   celorlalti.
 
 - Voiculescu Ion:
-  In cadrul aceeste etape am contribuit doar cu cateva ideei de implementare si
-  strategii care aveau in vedere si viitoarele modificare care vor venii in 
+  In cadrul aceestei etape am contribuit doar cu cateva idei de implementare si
+  strategii care aveau in vedere si viitoarele modificari care vor veni in 
   urmatoarele etape. Dar in mare parte, impreuna cu colegii mei, am discutat
   si am gasit idei care s-au dovedit mai eficiente din testele facute.
 
