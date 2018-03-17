@@ -49,8 +49,8 @@ public class SortShipsClass {
 	
 	static List<MyEntry> sortShips(List<Ship>ships,List<Planet>planets){
 		List<Ship>copyShips=new LinkedList<Ship>();
-		for(int i=0;i<ships.size();i++)
-			copyShips.add(ships.get(i));
+		for(Iterator<Ship> iterShip=ships.iterator();iterShip.hasNext();)
+			copyShips.add(iterShip.next());
 		
     	TreeSet<MyEntry>dist_s_p=new TreeSet<MyEntry>(new ComparatorSP());
     	
@@ -58,8 +58,8 @@ public class SortShipsClass {
     	
     	while(copyShips.isEmpty()==false){
     	List<Planet>copyPlanets=new LinkedList<Planet>();
-    	for(int i=0;i<planets.size();i++)
-    		copyPlanets.add(planets.get(i));
+    	for(Iterator<Planet> iterPlanet=planets.iterator();iterPlanet.hasNext();)
+    		copyPlanets.add(iterPlanet.next());
     	
     	while(copyPlanets.isEmpty()==false){
     		for(Iterator<Ship> iterShips=copyShips.iterator();iterShips.hasNext();){
