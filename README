@@ -138,7 +138,7 @@ DETALII DE IMPLEMENTARE
         > Best Case
             s / p * 1 * [O(s * p) + O(p)] = O(s ^ 2)
         > Worst Case
-            s / p * p * [O(s * p) + O(p)] = O(s^2 * p)
+            s / p * p * [O(s * p) + O(1)] = O(s^2 * p)
 
     Evitarea coliziunilor
       Mecanismul de baza pentru evitarea coliziunilor este cel implementat in
