@@ -1,0 +1,47 @@
++-----------------------------------------------------------------------------+
+|                   _       ____________  ____  ____  ______                  |
+|                  | |     / / ____/ __ )/ __ )/ __ \/_  __/                  |
+|                  | | /| / / __/ / __  / __  / / / / / /                     |
+|                  | |/ |/ / /___/ /_/ / /_/ / /_/ / / /                      |
+|                  |__/|__/_____/_____/_____/\____/ /_/                       |
+|                                                                             |
++-----------------------------------------------------------------------------+
+
+INSTRUCTIUNI DE COMPILARE
+  In folderul in care se afla executabilul ./halite se pune continutul
+  folderului in care se gaseste acest README. Pentru compilare se executa
+  comanda:
+    $ make
+  Rularea se face executand:
+    $ make run
+  Curatarea de fisiere log si obiect se face ruland:
+    $ make clean
+
+STRUCTURA PROIECTULUI
+  - ./hlt/*.java           -> contine starter-kit-ul cu unele modificari in
+                              Collision.java si Navigation.java;
+  - ./MyBot.java           -> reprezinta clasa principala care contine functia
+                              main() ce genereaza datele pentru iesirea catre
+                              executabilul ./halite;
+  - ./SortShipsClass.java  -> contine clasa MyEntry, clasa comparator pt
+                              elementele de tip MyEntry si functia de sortare
+                              sortShips();
+  - ./README               -> acest fisier
+  - ./Makefile             -> Makefile-ul asociat acestui proiect pentru
+                              compilare si rulare
+
+DETALII DE IMPLEMENTARE
+
+
+SURSE DE INSPIRATIE
+
+
+RESPONSABILITATEA FIECARUI MEMBRU AL ECHIPEI
+
+
+AUTORI:
+  > Grupa 235CB:
+    - Bompa Remus-Stefan
+    - Niculescu Mihai-Alexandru
+    - Smadu Razvan-Alexandru
+    - Voiculescu Ion
