@@ -3,7 +3,7 @@
  build: MyBot
 
  run:
-	java -Xmx1G MyBot $(ARGS)
+	@java -Xmx1G MyBot $(ARGS)
 
  MyBot:
 	javac MyBot.java

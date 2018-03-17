@@ -16,6 +16,11 @@ INSTRUCTIUNI DE COMPILARE
     $ make run
   Curatarea de fisiere log si obiect se face ruland:
     $ make clean
+  
+  Nota: Makefile-ul functioneaza si pentru un apel de tipul:
+    $ ./halite "make run"
+  sau chiar (pentru checker):
+   $ python ./run.py --cmd "make run" --clean
 
 STRUCTURA PROIECTULUI
   - ./hlt/*.java           -> contine starter-kit-ul cu unele modificari in
