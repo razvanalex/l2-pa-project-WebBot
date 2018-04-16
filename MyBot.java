@@ -131,6 +131,8 @@ public class MyBot {
             //     }
             // }
 
+
+            
             Planet target = initialStrat(gameMap, ships, noOnePlanets);
             for (Ship s : ships) {
                 boolean avoidObstacles = true;
