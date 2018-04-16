@@ -10,7 +10,6 @@ public class AI {
         TreeMap<Double, List<Pair<Ship, Planet>>> result = new TreeMap<>();
 
 //        ArrayList<Planet> planets = new ArrayList<>();
-
         for (Planet p : noOnePlanets) {
             for (Ship s : ourShips) {
                 double distance = s.getRealDistanceTo(gameMap, p);
