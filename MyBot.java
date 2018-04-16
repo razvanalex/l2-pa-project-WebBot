@@ -5,6 +5,8 @@ import java.util.*;
 //TODO de dat un score[i] : (num_ships) ^ 3 * d[i] distanta de la nava la spre aceiasi planeta i nava
 //TODO raport attack_def = our_ship / (our_ship + enemy_ship )* C, de gasit cine este C
 
+// TODO: solve initial start
+
 public class MyBot {
     public static int turn = 1;
 
@@ -75,57 +77,67 @@ public class MyBot {
 
         if (effectiveness <= 2.0 / 3.0 * (ourShips.size() + 1)) {
             Log.log("Defending...");
-            // Defend
-            if (inDangerPlanets.isEmpty()) {
-                // There are no planets in danger
-                /** sortare ships */
-                List<SortShipsClass.MyEntry> shipMoves;
-                if (noOnePlanets.isEmpty() == false) {
-                    shipMoves = SortShipsClass.sortShips(ships, noOnePlanets);
+            // // Defend
+            // if (inDangerPlanets.isEmpty()) {
+            //     // There are no planets in danger
+            //     /** sortare ships */
+            //     List<SortShipsClass.MyEntry> shipMoves;
+            //     if (noOnePlanets.isEmpty() == false) {
+            //         shipMoves = SortShipsClass.sortShips(ships, noOnePlanets);
 
-                    /** pentru fiecare nava ship */
-                    for (Iterator<SortShipsClass.MyEntry> iter = shipMoves.iterator(); iter.hasNext(); ) {
-                        SortShipsClass.MyEntry myEntry = iter.next();
-                        Ship ship = myEntry.getKey();
-                        Planet planet = myEntry.getValue();
+            //         /** pentru fiecare nava ship */
+            //         for (Iterator<SortShipsClass.MyEntry> iter = shipMoves.iterator(); iter.hasNext(); ) {
+            //             SortShipsClass.MyEntry myEntry = iter.next();
+            //             Ship ship = myEntry.getKey();
+            //             Planet planet = myEntry.getValue();
 
-                        if (ship.canDock(planet)) {
-                            moveList.add(new DockMove(ship, planet));
-                            continue;
-                        }
+            //             if (ship.canDock(planet)) {
+            //                 moveList.add(new DockMove(ship, planet));
+            //                 continue;
+            //             }
 
-                        boolean avoidObstacles = true;
-                        final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap,
-                                ship, planet, Constants.MAX_SPEED, avoidObstacles);
-                        if (newThrustMove != null) {
-                            moveList.add(newThrustMove);
-                        }
-                    }
-                }
-            } else {
-                Log.log("Danger....");
-                List<Ship> enemyShips = new ArrayList<Ship>();
-                for (Ship s : gameMap.getAllShips()) {
-                    if (s.getOwner() == ourID) {
-                        continue;
-                    }
-                    enemyShips.add(s);
-                }
-                int i = 0;
-                for (Planet p : ourPlanets) {
-                    for (Iterator<Ship> iter = ships.iterator(); iter.hasNext(); ) {
-                        Ship ship = iter.next();
-                        i++;
-                        if (ship.canDock(p) && i % 2 == 0) {
-                            moveList.add(new DockMove(ship, p));
-                            iter.remove();
-                        }
-                    }
-                }
+            //             boolean avoidObstacles = true;
+            //             final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap,
+            //                     ship, planet, Constants.MAX_SPEED, avoidObstacles);
+            //             if (newThrustMove != null) {
+            //                 moveList.add(newThrustMove);
+            //             }
+            //         }
+            //     }
+            // } else {
+            //     Log.log("Danger....");
+            //     List<Ship> enemyShips = new ArrayList<Ship>();
+            //     for (Ship s : gameMap.getAllShips()) {
+            //         if (s.getOwner() == ourID) {
+            //             continue;
+            //         }
+            //         enemyShips.add(s);
+            //     }
+            //     int i = 0;
+            //     for (Planet p : ourPlanets) {
+            //         for (Iterator<Ship> iter = ships.iterator(); iter.hasNext(); ) {
+            //             Ship ship = iter.next();
+            //             i++;
+            //             if (ship.canDock(p) && i % 2 == 0) {
+            //                 moveList.add(new DockMove(ship, p));
+            //                 iter.remove();
+            //             }
+            //         }
+            //     }
 
-                List<Planet> list = inDangerPlanets.pollLastEntry().getValue();
-                if (!list.isEmpty()) {
-                    attackShipsNearPlanet(list.get(0), ships, enemyShips, gameMap, moveList);
+            //     List<Planet> list = inDangerPlanets.pollLastEntry().getValue();
+            //     if (!list.isEmpty()) {
+            //         attackShipsNearPlanet(list.get(0), ships, enemyShips, gameMap, moveList);
+            //     }
+            // }
+
+            Planet target = initialStrat(gameMap, ships, noOnePlanets);
+            for (Ship s : ships) {
+                boolean avoidObstacles = true;
+                final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap,
+                        ship, target, Constants.MAX_SPEED, avoidObstacles);
+                if (newThrustMove != null) {
+                    moveList.add(newThrustMove);
                 }
             }
 
@@ -252,8 +264,6 @@ public class MyBot {
             if (newThrustMove != null) {
                 moveList.add(newThrustMove);
             }
-
-
         }
     }
 

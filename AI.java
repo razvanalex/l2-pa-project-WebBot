@@ -1,8 +1,24 @@
 import hlt.*;
-import javafx.util.Pair;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.*;
+
+class Pair<F, S> {
+	private F first;
+	private S second;
+
+	public Pair(F first, S second) {
+		this.first = first;
+		this.second = second;
+	}
+
+	public F getFirst() {
+		return this.first;
+	}
+
+	public S getSecond() {
+		return this.second;
+	}
+}
 
 public class AI {
 
@@ -25,28 +41,30 @@ public class AI {
         return result;
     }
 
-    public static void nextTarget(GameMap gameMap, List<Ship> attackShips, List<Planet> noOnePlanets) {
+    public static Pair<Integer, Planet> initialStrat(GameMap gameMap, List<Ship> attackShips, List<Planet> noOnePlanets) {
         TreeMap<Double, List<Pair<Ship, Planet>>> tree = sort(gameMap, attackShips, noOnePlanets);
         if (tree.isEmpty())
             return;
 
         double min = Double.MAX_VALUE;
+        Planet bestPlanet = null;
 
-        for (Map.Entry<Double ,List<Pair<Ship, Planet>>> list = tree.pollFirstEntry(); !tree.isEmpty(); list = tree.pollFirstEntry()) {
-            for (Pair<Ship, Planet> pair : list.getValue()) {
-                Planet p =  pair.getValue();
+        for (Map.Entry<Double, List<Pair<Ship, Planet>>> list = tree.pollFirstEntry(); !tree.isEmpty(); list = tree.pollFirstEntry()) {
+            for (Pair<Ship, Planet> pair : list.getSecond()) {
+                Planet p =  pair.getSecond();
                 if (p.getNumShipsTowardsPlanet() > (p.getDockingSpots() - p.getDockedShips().size())) {
                     continue;
                 }
 
-                double score = (double) p.getDockingSpots() / list.getKey();
-                if (min > score) {
+                double score = (double) p.getDockingSpots() / list.getFirst();
+                if (min > score || bestPlanet == null) {
                     min = score;
-
+                    bestPlanet = p;
                 }
 
             }
         }
-        return;
+        return new Pair<>(score, bestPlanet);
     }
+
 }
