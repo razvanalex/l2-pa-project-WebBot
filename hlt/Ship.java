@@ -12,7 +12,7 @@ public class Ship extends Entity {
     private final int dockedPlanet;
     private final int dockingProgress;
     private final int weaponCooldown;
-
+    private Entity target = null;
     private Mod mod;
 
     public Ship(final int owner, final int id, final double xPos, final double yPos,
@@ -126,6 +126,14 @@ public class Ship extends Entity {
 
     public void setMod(Mod mod) {
         this.mod = mod;
+    }
+
+    public Entity getTarget() {
+        return target;
+    }
+
+    public void setTarget(Entity target) {
+        this.target = target;
     }
 }
 
