@@ -88,7 +88,7 @@ public class Collision {
     }
 
     /**
-     * Computesthe cross product between two vectors
+     * Computes the cross product between two vectors
      *  
      * Formula : v X w =  v_x * w_y − v_y * w_x
      */

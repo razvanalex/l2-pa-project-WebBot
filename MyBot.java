@@ -73,7 +73,7 @@ public class MyBot {
 
 				//
 				if (turn < limit) {
-                                        // trimiterea pe cea mai apropiata planeta
+                    // trimiterea pe cea mai apropiata planeta
 					for (Map.Entry<Double, Planet> entry : treePlanet.entrySet()) {
 						Log.log("In for limit " + turn + " " + ship.getId());
 						Planet planet = entry.getValue();
@@ -175,6 +175,7 @@ public class MyBot {
 
 					}
 				}
+				Log.log("Not good......... Try to solve this!");
 			}
 			Networking.sendMoves(moveList);
 		}

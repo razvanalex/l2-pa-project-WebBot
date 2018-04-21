@@ -1,6 +1,26 @@
 package hlt;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+class CustomInteger {
+    int value;
+
+    public CustomInteger(int v) {
+        this.value = v;
+    }
+
+    public int getValue() {
+        return this.value;
+    }
+
+    public void setValue(int v) {
+        this.value = v;
+    }
+    public void increment() {
+        this.value++;
+    }
+}
 
 public class Navigation {
 
@@ -29,6 +49,40 @@ public class Navigation {
             final int maxCorrections,
             final double angularStepRad)
     {
+        CustomInteger ci1 = new CustomInteger(0);
+        CustomInteger ci2 = new CustomInteger(0);
+
+        ThrustMove move1 = navigateShipTowardsTargetImproved(gameMap, moveList, ship, 
+            targetPos, maxThrust, avoidObstacles, maxCorrections, angularStepRad, ci1);
+        ThrustMove move2 = navigateShipTowardsTargetImproved(gameMap, moveList, ship, 
+            targetPos, maxThrust, avoidObstacles, maxCorrections, -angularStepRad, ci2);
+
+        if (move1 == null && move2 != null) {
+            return move2;
+        } else if (move1 != null && move2 == null) {
+            return move1;
+        }
+
+        ThrustMove m = ci1.getValue() > ci2.getValue() ? move2 : move1;
+        if (m == null) {
+            Log.log("Null... Stay!");
+            return new ThrustMove(ship, 0, 0);
+        }
+        
+        return m;
+    }
+
+    public static ThrustMove navigateShipTowardsTargetImproved(
+        final GameMap gameMap,
+        final ArrayList<Move> moveList,
+        final Ship ship,
+        final Position targetPos,
+        final int maxThrust,
+        final boolean avoidObstacles,
+        final int maxCorrections,
+        final double angularStepRad, 
+        final CustomInteger crtDistance) 
+    {
         if (maxCorrections <= 0) {
             return null;
         }
@@ -54,9 +108,11 @@ public class Navigation {
             final double newTargetDy = Math.sin(angleRad + angularStepRad) * distance;
             final Position newTarget = new Position(ship.getXPos() + newTargetDx, ship.getYPos() + newTargetDy);
 
-            return navigateShipTowardsTarget(gameMap, moveList, ship, newTarget, maxThrust, true, (maxCorrections-1), angularStepRad);
+            crtDistance.increment();
+            return navigateShipTowardsTargetImproved(gameMap, moveList, ship, 
+                newTarget, maxThrust, true, (maxCorrections-1), angularStepRad, crtDistance);
         }
-        
+
         return pridictMove;
     }
 
@@ -78,12 +134,12 @@ public class Navigation {
     private static boolean twoPathsIntersect(ThrustMove move1, ThrustMove move2) {
         Position start1 = move1.getShip();
         double radAngle1 = Math.toRadians(move1.getAngle());
-        Position end1 = computeVector(start1, move1.getThrust() * 2, radAngle1);
+        Position end1 = computeVector(start1, move1.getThrust() + Constants.FORECAST_FUDGE_FACTOR, radAngle1);
         Position[] positions1 = computePositions(start1, end1);
 
         Position start2 = move2.getShip();
         double radAngle2 = Math.toRadians(move2.getAngle());
-        Position end2 = computeVector(start2, move2.getThrust() * 2, radAngle2);
+        Position end2 = computeVector(start2, move2.getThrust() + Constants.FORECAST_FUDGE_FACTOR, radAngle2);
         Position[] positions2 = computePositions(start2, end2);
 
         // Frontal collision
@@ -92,8 +148,8 @@ public class Navigation {
         }
 
         // Side collision
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 3; i += 2) {
+            for (int j = 0; j < 3; j += 2) {
                 if (Collision.twoSgmentIntersect(
                         positions1[i], positions1[i + 1], 
                         positions2[j], positions2[j + 1])) {
