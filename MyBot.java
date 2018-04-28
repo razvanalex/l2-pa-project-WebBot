@@ -10,7 +10,7 @@ public class MyBot {
 
 	public static void main(final String[] args) {
 		final Networking networking = new Networking();
-		final GameMap gameMap = networking.initialize("Tamagocchi");
+		final GameMap gameMap = networking.initialize("WebBot");
 
 		// We now have 1 full minute to analyse the initial map.
 		final String initialMapIntelligence =
@@ -65,15 +65,19 @@ public class MyBot {
 					}
 				}
 
-				int limit;
-				if (gameMap.getHeight() == gameMap.getWidth())//getWidth()  < 200
-					limit = 0; // pt harti mici
-				else
-					limit = 8; // pt harti mari
+				int areaOfMap = (gameMap.getHeight() * gameMap.getWidth());
+				int minimumArea = 150 * 150;
+				int numTurnsForMin = 4;
+				int limit =  (areaOfMap / minimumArea) * numTurnsForMin;
+				int someConstant = (int)(((double)areaOfMap / minimumArea) * 1.2);
+				// if (gameMap.getHeight() == gameMap.getWidth())//getWidth()  < 200
+				// 	limit = 0; // pt harti mici
+				// else
+				// 	limit = 8; // pt harti mari
 
 				//
 				if (turn < limit) {
-                    // trimiterea pe cea mai apropiata planeta
+					// trimiterea pe cea mai apropiata planeta
 					for (Map.Entry<Double, Planet> entry : treePlanet.entrySet()) {
 						Log.log("In for limit " + turn + " " + ship.getId());
 						Planet planet = entry.getValue();
@@ -109,7 +113,7 @@ public class MyBot {
 
 					boolean change = false;
 					// pentru hartile max : 5.1
-					if (enemyDist > planetDist + Constants.MAX_SPEED * 5.1 ) {
+					if (enemyDist > planetDist + Constants.MAX_SPEED * someConstant) {
 						// daca pot sa ajung la o nava inamica in mai de 6 ture
 						for (Map.Entry<Double, Planet> entry : treePlanet.entrySet()) {
 							Planet planet = entry.getValue();
@@ -133,7 +137,7 @@ public class MyBot {
 
 					}
 					if (change == true)
-						break;//break
+						continue;//break
 
 					for (Map.Entry<Double, Ship> entry : treeShip.entrySet()) {
 						// se ataca cea mai aproprita nava
@@ -174,8 +178,7 @@ public class MyBot {
 						}
 
 					}
-				}
-				Log.log("Not good......... Try to solve this!");
+				}		
 			}
 			Networking.sendMoves(moveList);
 		}

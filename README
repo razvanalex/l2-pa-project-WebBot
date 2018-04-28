@@ -1,17 +1,108 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Acest cod este doar implentarea MINIMALA a modului de functionare!!!!!!!!!!
-!!!! Contine bug-uri si are nevoie de imbunatatiri !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++-----------------------------------------------------------------------------+
+|                   _       ____________  ____  ____  ______                  |
+|                  | |     / / ____/ __ )/ __ )/ __ \/_  __/                  |
+|                  | | /| / / __/ / __  / __  / / / / / /                     |
+|                  | |/ |/ / /___/ /_/ / /_/ / /_/ / / /                      |
+|                  |__/|__/_____/_____/_____/\____/ /_/                       |
+|                                                                             |
++-----------------------------------------------------------------------------+
 
-Idea principala este :
-In primele turn navele se duc catre cea mai aproprita planeta. Acesta este faza
-de "constructie". Apoi decide daca sa atace o nava inamica sau sau sa mearga 
-catre o planeta aproporita.
-Trebui ca acele constate sa fie determinate in fucnctie de comportament 
-inamicului, harta, distanta fata de inamic, etc.
+NSTRUCTIUNI DE COMPILARE
+  In folderul in care se afla executabilul ./halite se pune continutul
+  folderului in care se gaseste acest README. Pentru compilare se executa
+  comanda:
+    $ make
+  Rularea se face executand:
+    $ make run
+  Curatarea de fisiere log si obiect se face ruland:
+    $ make clean
+  
+STRUCTURA PROIECTULUI
+  - ./hlt/*.java           -> fisierele auxiliare pentru joc si functionarea 
+                              botului
+  - ./MyBot.java           -> reprezinta clasa principala care contine functia
+                              main() ce genereaza datele pentru iesirea catre
+                              executabilul ./halite si implementarea logicii
+                              botului
+  - ./README               -> acest fisier
+  - ./Makefile             -> Makefile-ul asociat acestui proiect pentru
+                              compilare si rulare
+
+DETALII DE IMPLEMENTARE
+    Imbunatatirea mecanismului de coliziuni (mai trebuie lucrat la el)
+      Din stater-kit, am observat ca mecanismul este unul foarte simplist (se 
+      verifica daca intre tinta si nava exista vreun obiect). Acest mecanism 
+      garantat genereaza coliziuni. Sistemul dezvoltat de noi este urmatorul:
+        Pentru fiecare nava se verifica daca urmatoarea mutare este valida (nu 
+        se ciocneste de vreo nava proprie). Verificarea coliziunii este facuta
+        prin verificarea segmentelor paralele cu directia navei, aflate astfel
+        incat sa margineasca drumul parcurs de nava pe lateral, ca in figura de 
+        mai jos:
+
+        -------------------------------
+        SHIP->                                
+        -------------------------------
+
+        Cele doua drepte se afla la raza + 0.1 fata de centrul navei. De asemenea
+        mai exista un segment care trece prin centrul navei si care se limiteaza
+        la pozitia finala a navei. In cazul in care este detectata o coliziune, 
+        se modifica unghiul navei cu 1 grad si se reincearca testarea coliziunior.
+        Acest lucru se repeta pana se ajunge la 90 de grade in stanga si 90 de 
+        grande in dreapta. La final, daca una din directii duce la tina 
+        pe o distanta mai scurta, se alege acea mutare; in cazul in care ambele 
+        dau null (nu se poate ajunge la tina deloc), nava o sa stea pe loc.
+        
+      Ce mai trebuie lucrat la coliziuni:
+        In cazul in care navele se afla fata in fata, sunt sanse ca dreptele 
+        sa fie paralele si sa nu intersecteze raza navei. Prin urmare, nu se 
+        va detecta coliziunea, si navele se vor distruge reciproc. O solutie 
+        pentru aceasta o sa fie verificarea daca segmentele intersecteaza 
+        bounding circle-ul navelor (poate si in raport cu timpul) ale caror 
+        pozitie urmatoare se stie. 
+        
+      Complexitate: Worst case  este O(1) * O(num_ships ^ 2), unde constanta este
+        destul de mare (in recursivitate se poate intra de maxim 180 de ori).
+      
+    Tactica de lupta/aparare
+      Se extrag navele noastre si se sorteaza dupa distanta pe Ox si Oy.
+      Pentru fiecare nava a noastra
+        Daca este dockata, nu facem nimic
+        Se sorteaza planetele dupa distanta (intr-un treemap)
+        Se sorteaza navele inamice dupa distanta fata de nava curenta
+        In functie de dimensiunea hartii (acest lucru inca e in faza de testare)
+          se calculeaza un timp pentru constructie - in care navele 
+          ocupa o parte a hartii.
+        altfel (in restul timpului) se face o alegere greedy, dupa cum urmeaza
+        Daca nava inamica poate fi atacata intr-un numar de pasi, atunci atac-o
+        Daca este o planeta mai apropare, dockeaza
+      
+      Restul codului este inca in lucru.
+    
+    Complexitate: O(numNava log numNave) + (O(numNave) + O(numPlanete)) * O(numNave)
+    = O(numNava log numNave + numNave ^ 2 + numPlanete) = O(numNave ^ 2 + numPlanete)
+
+
+SURSE DE INSPIRATIE
+https://pythonprogramming.net/custom-ai-halite-ii-artificial-intelligence-competition/
+
+
+RESPONSABILITATEA FIECARUI MEMBRU AL ECHIPEI
+Bompa Remus-Stefan
+  Implementarea tacticii de atac/aparare, cercetare, teste si scriere de cod
+
+Niculescu Mihai-Alexandru
+  Implementarea tacticii de atac/aparare, diferite abordari care au mers sau nu 
+  plus teste
+
+Smadu Razvan-Alexandru
+  Sistemul de coliziune si idei pentru tactica de atac/aparare si teste
+
+Voiculescu Ion
+  Teste si idei in implementarea tacticii de aparare, urmarind multe replay-uri
+
+AUTORI:
+  > Grupa 325CB:
+    - Bompa Remus-Stefan
+    - Niculescu Mihai-Alexandru
+    - Smadu Razvan-Alexandru
+    - Voiculescu Ion

@@ -109,16 +109,12 @@ public class Collision {
     }
 
     /**
-     * Note that: s1 <= e1 and s2 <= e2
+     * Note that: s1 <= e2 and s2 <= e1
      */
     public static boolean intervalIntersect(
         double s1, double e1, 
         double s2, double e2) 
     {
-
-        if (e2 < e1 && s1 < e2)
-            return true;
-
-        return false;
+        return s1 <= e2 && s2 <= e1;
     }
 }
