@@ -130,7 +130,7 @@ public class Navigation {
 		final ThrustMove pridictMove = new ThrustMove(ship, angleDeg, thrust);
 
 		if (avoidObstacles && !(gameMap.objectsBetween(ship, targetPos).isEmpty()
-			   && validNextMove(pridictMove, moveList, gameMap))) {
+			   && validNextMove(pridictMove, moveList, gameMap) && !hitBorder(pridictMove, gameMap))) {
 			final double newTargetDx = Math.cos(angleRad + angularStepRad) * distance;
 			final double newTargetDy = Math.sin(angleRad + angularStepRad) * distance;
 			final Position newTarget = new Position(ship.getXPos() + newTargetDx, ship.getYPos() + newTargetDy);
@@ -150,8 +150,7 @@ public class Navigation {
 	{
 		for (Move m : moveList) {
 			if (m instanceof ThrustMove) {
-				if (twoPathsIntersectV2(crtMove, (ThrustMove)m)) {
-					Log.log("FALSE");
+				if (twoPathsIntersect(crtMove, (ThrustMove)m)) {
 					return false;
 				}
 			}
@@ -160,7 +159,18 @@ public class Navigation {
 		return true;
 	}
 
-	private static boolean twoPathsIntersectV2(ThrustMove move1, ThrustMove move2) {
+	private static boolean hitBorder(final ThrustMove move, final GameMap gameMap) {
+		Ship ship = move.getShip();
+		double thrust = move.getThrust();
+		int angle = move.getAngle();
+
+		Position newPosition = computeVector(ship, thrust, Math.toRadians(angle));
+
+		return newPosition.getXPos() <= 0 || newPosition.getXPos() >= gameMap.getWidth() 
+				|| newPosition.getYPos() <= 0 || newPosition.getYPos() >= gameMap.getHeight();
+	}
+
+	private static boolean twoPathsIntersect(ThrustMove move1, ThrustMove move2) {
 		final double radius = Constants.FORECAST_FUDGE_FACTOR;
 
 		Position start1 = move1.getShip();
@@ -211,79 +221,9 @@ public class Navigation {
 		return n * n;
 	}
 
-	private static boolean twoPathsIntersect(ThrustMove move1, ThrustMove move2) {
-		Position start1 = move1.getShip();
-		double radAngle1 = Math.toRadians(move1.getAngle());
-		Position end1 = computeVector(start1, move1.getThrust() + Constants.FORECAST_FUDGE_FACTOR, radAngle1);
-		Position[] positions1 = computePositions(start1, end1);
-
-		Position start2 = move2.getShip();
-		double radAngle2 = Math.toRadians(move2.getAngle());
-		Position end2 = computeVector(start2, move2.getThrust() + Constants.FORECAST_FUDGE_FACTOR, radAngle2);
-		Position[] positions2 = computePositions(start2, end2);
-
-		// Frontal collision
-		// TODO: change this
-		if (Collision.twoSgmentIntersect(start1, end1, start2, end2) 
-				|| Collision.segmentCircleIntersect(start1, end1, move2.getShip(), Constants.FORECAST_FUDGE_FACTOR)
-				|| Collision.segmentCircleIntersect(start2, end2, move1.getShip(), Constants.FORECAST_FUDGE_FACTOR)) {
-			return true;
-		}
-
-		// Side collision
-		for (int i = 0; i < 3; i += 2) {
-			for (int j = 0; j < 3; j += 2) {
-				if (Collision.twoSgmentIntersect(
-						positions1[i], positions1[i + 1], 
-						positions2[j], positions2[j + 1])) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	private static Position computeVector(Position initial, double value, double angle) {
+	public static Position computeVector(Position initial, double value, double angle) {
 		return Collision.add2D(initial, 
 			new Position(value * Math.cos(angle), value * Math.sin(angle))
 		);
-	}
-
-	private static Position[] computePositions(Position start, Position end) {
-		double angle = Math.atan((end.getYPos() -  start.getYPos()) / 
-					   (end.getXPos() -  start.getXPos()));
-
-		double lowerDistanceX = Constants.FORECAST_FUDGE_FACTOR *
-			Math.cos(angle - Math.PI / 2);
-		double lowerDistanceY = Constants.FORECAST_FUDGE_FACTOR *
-			Math.sin(angle - Math.PI / 2);
-		double upperDistanceX = Constants.FORECAST_FUDGE_FACTOR *
-			Math.cos(angle + Math.PI / 2);
-		double upperDistanceY = Constants.FORECAST_FUDGE_FACTOR *
-			Math.sin(angle + Math.PI / 2);
-
-		double backX =  Constants.FORECAST_FUDGE_FACTOR * Math.cos(angle + Math.PI);
-		double backY =  Constants.FORECAST_FUDGE_FACTOR * Math.sin(angle + Math.PI);
-
-		Position[] p = new Position[4];
-
-		p[0] = new Position(
-			start.getXPos() + lowerDistanceX + backX, 
-			start.getYPos() + lowerDistanceY + backY);
-		   
-		p[1] = new Position(
-			end.getXPos() + lowerDistanceX, 
-			end.getYPos() + lowerDistanceY);
-		
-		p[2] = new Position(
-			start.getXPos() + upperDistanceX + backX, 
-			start.getYPos() + upperDistanceY + backY);
-		
-		p[3] = new Position(
-			end.getXPos() + upperDistanceX, 
-			end.getYPos() + upperDistanceY);
-
-		return p;
 	}
 }
