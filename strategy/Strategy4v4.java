@@ -173,4 +173,9 @@ public class Strategy4v4 implements Strategy {
 
 		}
 	}
+
+	@Override
+	public void updateTurn(int turn) {
+		this.turn = turn;
+	}
 }

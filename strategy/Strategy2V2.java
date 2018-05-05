@@ -171,4 +171,9 @@ public class Strategy2V2 implements Strategy {
 			}
 		}
 	}
+
+	@Override
+	public void updateTurn(int turn) {
+		this.turn = turn;
+	}
 }

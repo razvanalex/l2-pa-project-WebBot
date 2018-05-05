@@ -12,4 +12,6 @@ import java.util.ArrayList;
 public interface Strategy {
 
 	public abstract void runGame(ArrayList<Move> moves, GameMap gameMap);
+
+	public abstract void updateTurn(int turn);
 }
